@@ -2,21 +2,37 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Happy Birthday Vivek! ❤️ From Kanak</title>
+  
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          screens: {
+            'xs': '375px',
+          }
+        }
+      }
+    }
+  </script>
+
   <!-- FontAwesome for Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
   <style>
     body {
       font-family: 'Poppins', sans-serif;
       background: radial-gradient(circle at center, #ffe4e6 0%, #fecdd3 40%, #fda4af 100%);
       overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
     }
     
     .font-romantic {
@@ -27,17 +43,20 @@
       font-family: 'Caveat', cursive;
     }
 
-    /* Custom Animations */
+    /* Floating Hearts Background Animation */
     @keyframes float-heart {
       0% {
-        transform: translateY(100vh) scale(0) rotate(0deg);
+        transform: translateY(105vh) scale(0) rotate(0deg);
         opacity: 0;
       }
-      50% {
+      10% {
+        opacity: 0.8;
+      }
+      90% {
         opacity: 0.8;
       }
       100% {
-        transform: translateY(-10vh) scale(1) rotate(360deg);
+        transform: translateY(-10vh) scale(1.2) rotate(360deg);
         opacity: 0;
       }
     }
@@ -50,17 +69,21 @@
 
     /* Pulse Glow */
     @keyframes love-glow {
-      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(244, 63, 94, 0.6)); }
-      50% { transform: scale(1.1); filter: drop-shadow(0 0 30px rgba(244, 63, 94, 0.9)); }
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 12px rgba(244, 63, 94, 0.5)); }
+      50% { transform: scale(1.08); filter: drop-shadow(0 0 25px rgba(244, 63, 94, 0.8)); }
     }
 
     .love-pulse {
-      animation: love-glow 2s infinite ease-in-out;
+      animation: love-glow 2.2s infinite ease-in-out;
     }
 
     /* Card flip style */
+    .flip-card {
+      perspective: 1000px;
+    }
+
     .flip-card-inner {
-      transition: transform 0.8s;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
       transform-style: preserve-3d;
     }
 
@@ -70,6 +93,7 @@
 
     .flip-card-front, .flip-card-back {
       backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
     }
 
     .flip-card-back {
@@ -78,7 +102,7 @@
 
     /* Smooth transition for quiz progression */
     .step-container {
-      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.4s ease-out;
     }
 
     /* Sparkle Particle Effect */
@@ -90,190 +114,187 @@
       background-color: #fdf2e9;
       box-shadow: 0 0 10px 2px #f43f5e;
       pointer-events: none;
-      animation: sparkleAnim 1.5s linear infinite;
+      animation: sparkleAnim 1.2s linear infinite;
     }
 
     @keyframes sparkleAnim {
       0% { transform: scale(0); opacity: 0; }
       50% { opacity: 1; }
-      100% { transform: scale(1.5); opacity: 0; }
+      100% { transform: scale(1.4); opacity: 0; }
     }
 
-    /* Floating Navigation bar at bottom */
+    /* Music Control Pill */
     .music-control-pill {
-      box-shadow: 0 8px 32px 0 rgba(244, 63, 94, 0.2);
+      box-shadow: 0 8px 32px 0 rgba(244, 63, 94, 0.15);
       backdrop-filter: blur(8px);
-      border: 1px solid rgba(255, 255, 255, 0.3);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.4);
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between items-center selection:bg-rose-200 selection:text-rose-900">
+<body class="min-h-screen flex flex-col justify-between items-center selection:bg-rose-200 selection:text-rose-900 overflow-x-hidden">
 
   <!-- Sparkle Overlay container -->
   <div id="sparkle-layer" class="fixed inset-0 pointer-events-none z-40"></div>
   <!-- Floating Hearts Background -->
   <div id="hearts-bg" class="fixed inset-0 pointer-events-none z-0"></div>
 
-  <!-- Music Pill Control (Always Visible Top Right) -->
-  <div class="fixed top-4 right-4 z-50 flex items-center gap-2">
-    <button id="music-toggle" class="music-control-pill bg-white/80 hover:bg-white text-rose-500 rounded-full p-3 flex items-center justify-center transition-all duration-300 transform hover:scale-110 active:scale-95">
-      <i id="music-icon" class="fas fa-music-alt fa-spin"></i>
-    </button>
-    <div id="music-toast" class="bg-rose-600 text-white text-xs px-3 py-1.5 rounded-full font-semibold opacity-0 transition-opacity duration-500 pointer-events-none shadow-md">
+  <!-- Music Floating Controller (Always Visible Top Right) -->
+  <div class="fixed top-3 right-3 z-50 flex items-center gap-2">
+    <div id="music-toast" class="bg-rose-600/90 backdrop-blur-md text-white text-xs px-3 py-2 rounded-full font-semibold opacity-0 transition-opacity duration-300 pointer-events-none shadow-md">
       Music Playing ❤️
     </div>
+    <button id="music-toggle" class="music-control-pill bg-white/90 hover:bg-white text-rose-500 rounded-full w-10 h-10 xs:w-12 xs:h-12 flex items-center justify-center transition-all duration-300 transform hover:scale-105 active:scale-95">
+      <i id="music-icon" class="fas fa-music"></i>
+    </button>
   </div>
 
-  <!-- Web Audio API / Synthesized background track for reliable fallback playback without CORS -->
+  <!-- Background Music Element -->
   <audio id="bg-music" loop preload="auto">
     <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
   </audio>
 
   <!-- Header Banner -->
-  <header class="w-full text-center py-6 px-4 z-10 select-none">
-    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/40 backdrop-blur-sm text-rose-700 text-sm font-semibold tracking-wider">
+  <header class="w-full text-center py-4 xs:py-6 px-4 z-10 select-none">
+    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/50 backdrop-blur-sm text-rose-700 text-[11px] xs:text-xs font-bold tracking-wider shadow-sm border border-white/20">
       <i class="fas fa-heart animate-pulse"></i>
-      <span>CREATED ESPECIALLY FOR VIVEK BY KANAK</span>
+      <span>MADE WITH LOVE FOR VIVEK</span>
       <i class="fas fa-heart animate-pulse"></i>
     </div>
   </header>
 
   <!-- MAIN CONTAINER WITH STEP-BY-STEP PROGRESSION -->
-  <main class="w-full max-w-4xl px-4 flex-grow flex items-center justify-center z-10 py-4 mb-20">
+  <main class="w-full max-w-4xl px-4 flex-grow flex items-center justify-center z-10 py-2 sm:py-6 mb-16">
 
     <!-- STEP 1: WELCOME & START SCREEN -->
-    <div id="step-welcome" class="step-container w-full max-w-xl bg-white/90 backdrop-blur-md rounded-3xl p-8 md:p-12 shadow-2xl text-center border-2 border-pink-100 flex flex-col items-center">
-      <div class="relative w-32 h-32 mb-6 flex items-center justify-center">
+    <div id="step-welcome" class="step-container w-full max-w-lg bg-white/95 backdrop-blur-md rounded-3xl p-6 xs:p-8 sm:p-12 shadow-2xl text-center border border-rose-100 flex flex-col items-center">
+      <div class="relative w-24 h-24 xs:w-28 xs:h-28 sm:w-32 sm:h-32 mb-4 xs:mb-6 flex items-center justify-center">
         <!-- Heart Illustration -->
         <svg class="w-full h-full text-rose-500 love-pulse" viewBox="0 0 24 24" fill="currentColor">
           <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
         </svg>
-        <span class="absolute text-white font-romantic text-3xl font-bold pt-1">K + V</span>
+        <span class="absolute text-white font-romantic text-2xl xs:text-3xl font-bold pt-1">K + V</span>
       </div>
 
-      <h1 class="text-3xl md:text-5xl font-bold text-rose-800 tracking-tight leading-snug">
+      <h1 class="text-2xl xs:text-3xl sm:text-4xl font-bold text-rose-800 tracking-tight leading-tight">
         Hello <span class="text-rose-600 underline decoration-wavy decoration-pink-300">Vivek</span>!
       </h1>
-      <p class="mt-4 text-gray-600 text-lg md:text-xl">
-        Someone who loves you dearly has a surprise waiting for you today. Yes, it's <strong class="text-rose-600 font-romantic text-3xl block mt-1">Kanak</strong>
+      <p class="mt-3 xs:mt-4 text-gray-600 text-sm xs:text-base sm:text-lg px-2">
+        Someone who loves you to infinity and back has a beautiful surprise waiting for you. Yes, it's <strong class="text-rose-600 font-romantic text-2xl xs:text-3xl block mt-1">Kanak</strong>
       </p>
 
-      <div class="mt-8 bg-rose-50 rounded-2xl p-4 border border-rose-100 max-w-md w-full">
-        <p class="text-rose-700 font-semibold text-sm">
-          <i class="fas fa-lock mr-2"></i> To unlock your gorgeous birthday gift, you must first clear a quick, romantic Couple Quiz! Ready?
+      <div class="mt-6 bg-rose-50 rounded-2xl p-4 border border-rose-100 w-full max-w-sm">
+        <p class="text-rose-700 font-semibold text-xs xs:text-sm">
+          <i class="fas fa-lock mr-2"></i> To unlock your gorgeous birthday gift, you must first clear a quick, interactive Couple Quiz!
         </p>
       </div>
 
-      <button onclick="startQuiz()" class="mt-8 bg-rose-500 hover:bg-rose-600 text-white font-bold text-lg px-8 py-4 rounded-full shadow-lg hover:shadow-rose-300 transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 flex items-center gap-3">
+      <button onclick="startQuiz()" class="mt-6 xs:mt-8 bg-rose-500 hover:bg-rose-600 text-white font-bold text-base xs:text-lg px-6 xs:px-8 py-3.5 xs:py-4 rounded-full shadow-lg hover:shadow-rose-300 transition-all duration-300 transform hover:-translate-y-0.5 active:scale-95 flex items-center gap-2">
         Let's Start! <i class="fas fa-arrow-right"></i>
       </button>
     </div>
 
-
     <!-- STEP 2: COUPLE QUIZ SCREEN -->
-    <div id="step-quiz" class="step-container hidden w-full max-w-xl bg-white/95 backdrop-blur-md rounded-3xl p-8 shadow-2xl border-2 border-pink-100">
+    <div id="step-quiz" class="step-container hidden w-full max-w-lg bg-white/95 backdrop-blur-md rounded-3xl p-5 xs:p-8 shadow-2xl border border-rose-100">
       
       <!-- Progress Bar -->
-      <div class="w-full bg-rose-100 h-2.5 rounded-full mb-6 overflow-hidden">
-        <div id="quiz-progress" class="bg-gradient-to-r from-rose-400 to-rose-600 h-2.5 rounded-full transition-all duration-500" style="width: 20%;"></div>
+      <div class="w-full bg-rose-100 h-2 rounded-full mb-4 xs:mb-6 overflow-hidden">
+        <div id="quiz-progress" class="bg-gradient-to-r from-rose-400 to-rose-600 h-2 rounded-full transition-all duration-500" style="width: 20%;"></div>
       </div>
 
-      <div class="flex justify-between items-center text-xs text-rose-500 font-semibold mb-4">
+      <div class="flex justify-between items-center text-[10px] xs:text-xs text-rose-500 font-semibold mb-3">
         <span id="quiz-step-text">QUESTION 1 OF 5</span>
-        <span class="bg-rose-50 px-2 py-1 rounded-full"><i class="fas fa-heart"></i> Just for us</span>
+        <span class="bg-rose-50 px-2 py-0.5 rounded-full"><i class="fas fa-heart"></i> Just for us</span>
       </div>
 
       <!-- Question Box -->
-      <div id="quiz-question-container" class="min-h-[120px] flex items-center justify-center">
-        <h3 id="quiz-question" class="text-xl md:text-2xl font-bold text-rose-800 text-center leading-relaxed">
+      <div id="quiz-question-container" class="min-h-[100px] flex items-center justify-center">
+        <h3 id="quiz-question" class="text-lg xs:text-xl sm:text-2xl font-bold text-rose-800 text-center leading-normal">
           Are you ready to admit that Kanak loves you more than you love her?
         </h3>
       </div>
 
       <!-- Custom Response / Feedback UI -->
-      <div id="quiz-feedback" class="hidden my-4 text-center p-3 rounded-xl font-medium text-rose-600 bg-rose-50 border border-rose-200 animate-bounce">
+      <div id="quiz-feedback" class="hidden my-3 text-center p-2.5 rounded-xl text-xs xs:text-sm font-medium text-rose-600 bg-rose-50 border border-rose-200 animate-bounce">
         Hehe, correct answer! 💖
       </div>
 
-      <!-- Interactive Answer Buttons -->
-      <div class="mt-8 flex flex-col md:flex-row gap-4 justify-center items-center relative min-h-[100px]">
+      <!-- Interactive Answer Buttons Container -->
+      <div id="btn-wrapper" class="mt-6 xs:mt-8 flex flex-col sm:flex-row gap-3 justify-center items-center relative min-h-[120px] w-full">
         
-        <button id="btn-yes" onclick="handleQuizAnswer('yes')" class="w-full md:w-1/2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-lg py-4 px-6 rounded-2xl shadow-md hover:shadow-emerald-200 transition-all duration-200 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
+        <button id="btn-yes" onclick="handleQuizAnswer('yes')" class="w-full sm:w-1/2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-base xs:text-lg py-3.5 px-4 rounded-xl shadow-md transition-all duration-200 transform active:scale-95 flex items-center justify-center gap-2">
           <i class="fas fa-check-circle"></i> YES
         </button>
 
-        <button id="btn-no" onclick="handleQuizAnswer('no')" class="w-full md:w-1/2 bg-rose-500 hover:bg-rose-600 text-white font-bold text-lg py-4 px-6 rounded-2xl shadow-md hover:shadow-rose-200 transition-all duration-200 flex items-center justify-center gap-2">
+        <button id="btn-no" onclick="handleQuizAnswer('no')" class="w-full sm:w-1/2 bg-rose-500 hover:bg-rose-600 text-white font-bold text-base xs:text-lg py-3.5 px-4 rounded-xl shadow-md transition-all duration-200 flex items-center justify-center gap-2">
           <i class="fas fa-times-circle"></i> NO
         </button>
         
       </div>
 
       <!-- Playful instructions for tricky question -->
-      <p id="quiz-tip" class="text-center text-xs text-rose-400 italic mt-6 opacity-0 transition-opacity">
+      <p id="quiz-tip" class="text-center text-[11px] xs:text-xs text-rose-400 italic mt-4 opacity-0 transition-opacity">
         Tip: Try selecting NO, we double dare you! 😉
       </p>
     </div>
 
-
     <!-- STEP 3: THE BIRTHDAY REVEAL WRAPPER & LOCK INTERACTION -->
-    <div id="step-unlock" class="step-container hidden w-full max-w-xl bg-white/90 backdrop-blur-md rounded-3xl p-8 md:p-12 shadow-2xl text-center border-2 border-pink-100 flex flex-col items-center">
-      <h2 class="text-3xl font-bold text-rose-800 font-romantic mb-2">Quiz Completed! 🎉</h2>
-      <p class="text-gray-600 mb-8">You proved your love. Now, tap on the virtual heart key to unlock your gift!</p>
+    <div id="step-unlock" class="step-container hidden w-full max-w-lg bg-white/95 backdrop-blur-md rounded-3xl p-6 xs:p-8 sm:p-12 shadow-2xl text-center border border-rose-100 flex flex-col items-center">
+      <h2 class="text-2xl xs:text-3xl font-bold text-rose-800 font-romantic mb-1">Quiz Completed! 🎉</h2>
+      <p class="text-xs xs:text-sm text-gray-600 mb-6">You proved your love. Now, tap on the heart below to unlock your beautiful gift!</p>
 
       <div class="relative cursor-pointer group" onclick="unlockSurprise()">
         <!-- Glowing outer circle -->
-        <div class="absolute -inset-4 bg-gradient-to-r from-rose-400 to-pink-500 rounded-full blur-xl opacity-70 group-hover:opacity-100 transition-opacity duration-500 animate-pulse"></div>
+        <div class="absolute -inset-3 bg-gradient-to-r from-rose-400 to-pink-500 rounded-full blur-xl opacity-60 group-hover:opacity-100 transition-opacity duration-300 animate-pulse"></div>
         
         <!-- Interactive Big Lock-Heart -->
-        <div class="relative w-40 h-40 bg-white rounded-full flex flex-col items-center justify-center shadow-2xl transform transition-transform duration-300 group-hover:scale-110">
-          <i class="fas fa-heart-crack text-rose-500 text-6xl animate-bounce"></i>
-          <span class="text-xs font-bold text-rose-700 uppercase tracking-widest mt-2">TAP TO UNLOCK</span>
+        <div class="relative w-32 h-32 xs:w-36 xs:h-36 bg-white rounded-full flex flex-col items-center justify-center shadow-xl transform transition-transform duration-300 active:scale-95">
+          <i class="fas fa-heart-crack text-rose-500 text-5.5xl xs:text-5xl animate-bounce"></i>
+          <span class="text-[10px] font-bold text-rose-700 uppercase tracking-widest mt-2">TAP TO UNLOCK</span>
         </div>
       </div>
     </div>
 
-
     <!-- STEP 4: FULL SURPRISE REVEAL (PHOTOS, MUSIC, WISHES, CAROUSEL) -->
-    <div id="step-surprise" class="step-container hidden w-full max-w-4xl flex flex-col gap-12">
+    <div id="step-surprise" class="hidden w-full flex flex-col gap-6 xs:gap-8">
       
       <!-- HERO BANNER -->
-      <div class="bg-white/85 backdrop-blur-md rounded-3xl p-8 md:p-12 text-center shadow-xl border-2 border-pink-100 relative overflow-hidden">
-        <!-- Sparkly absolute SVGs -->
-        <div class="absolute top-4 left-4 text-pink-300 text-3xl animate-pulse"><i class="fas fa-sparkles"></i></div>
-        <div class="absolute bottom-4 right-4 text-pink-300 text-3xl animate-pulse"><i class="fas fa-heart"></i></div>
+      <div class="bg-white/90 backdrop-blur-md rounded-3xl p-5 xs:p-8 sm:p-12 text-center shadow-xl border border-pink-100 relative overflow-hidden">
+        <div class="absolute top-3 left-3 text-pink-300 text-lg xs:text-xl animate-pulse"><i class="fas fa-heart"></i></div>
+        <div class="absolute bottom-3 right-3 text-pink-300 text-lg xs:text-xl animate-pulse"><i class="fas fa-star"></i></div>
 
-        <h1 class="text-5xl md:text-7xl font-bold text-rose-600 font-romantic mb-4 tracking-wide animate-pulse">
+        <h1 class="text-3xl xs:text-4xl sm:text-5xl md:text-6xl font-bold text-rose-600 font-romantic mb-2 tracking-wide">
           Happy Birthday, Vivek!
         </h1>
-        <p class="text-lg md:text-2xl text-rose-800 font-medium">
-          With Love, Yours Forever & Always — <strong class="text-rose-600 font-romantic text-3xl">Kanak</strong>
+        <p class="text-sm xs:text-base sm:text-xl text-rose-800 font-medium">
+          With Love, Yours Forever & Always — <strong class="text-rose-600 font-romantic text-xl xs:text-2xl sm:text-3xl">Kanak</strong>
         </p>
 
-        <!-- Beautiful custom love letter snippet -->
-        <div class="mt-8 max-w-xl mx-auto p-6 bg-gradient-to-br from-rose-50/80 to-pink-50/80 border border-pink-100 rounded-2xl relative">
-          <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-rose-500 text-white text-xs px-3 py-1 rounded-full uppercase tracking-widest">Kanak's Confession</div>
-          <p class="text-gray-700 italic leading-relaxed text-sm md:text-base font-handwritten text-2xl pt-2">
+        <!-- Cute love letter snippet -->
+        <div class="mt-6 max-w-xl mx-auto p-4 xs:p-6 bg-gradient-to-br from-rose-50/80 to-pink-50/80 border border-pink-100 rounded-2xl relative">
+          <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-rose-500 text-white text-[9px] xs:text-[10px] px-2.5 py-1 rounded-full uppercase tracking-widest">Kanak's Confession</div>
+          <p class="text-gray-700 italic leading-relaxed font-handwritten text-lg xs:text-xl sm:text-2xl pt-2">
             "To the man who makes my heart skip a beat, the one who knows how to make me laugh even on my worst days, and the absolute love of my life. Having you is like having the entire world. May this year bring you all the endless happiness, success, and love that you deserve. Happy Birthday, my sweet boy!"
           </p>
         </div>
       </div>
 
       <!-- COUPLE PHOTOS GALLERY SLIDESHOW -->
-      <div class="bg-white/85 backdrop-blur-md rounded-3xl p-6 md:p-8 shadow-xl border-2 border-pink-100">
-        <div class="text-center mb-6">
-          <span class="px-3 py-1 rounded-full bg-rose-100 text-rose-700 text-xs font-bold uppercase tracking-widest">Our Love Story</span>
-          <h2 class="text-2xl md:text-3xl font-bold text-rose-800 mt-2">Beautiful Moments Together</h2>
-          <p class="text-sm text-gray-500 mt-1">Every moment spent with you is a lifetime of gold.</p>
+      <div class="bg-white/90 backdrop-blur-md rounded-3xl p-4 xs:p-6 sm:p-8 shadow-xl border border-pink-100">
+        <div class="text-center mb-4">
+          <span class="px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-700 text-[10px] font-bold uppercase tracking-widest">Our Love Story</span>
+          <h2 class="text-xl xs:text-2xl font-bold text-rose-800 mt-1">Beautiful Moments Together</h2>
+          <p class="text-xs text-gray-500 mt-0.5">Every moment spent with you is a lifetime of gold.</p>
         </div>
 
         <!-- Slideshow Container -->
-        <div class="relative w-full aspect-[4/3] md:h-[450px] bg-rose-50 rounded-2xl overflow-hidden shadow-lg border border-rose-100">
+        <div class="relative w-full aspect-[4/3] xs:aspect-[1.4/1] md:h-[400px] bg-rose-50 rounded-2xl overflow-hidden shadow-md border border-rose-100">
           
           <!-- Slide 1 -->
           <div class="slide absolute inset-0 opacity-100 transition-opacity duration-1000 ease-in-out flex flex-col">
-            <div class="w-full h-4/5 bg-rose-100 flex items-center justify-center p-4">
-              <!-- Visual placeholder representation of Star Gazing -->
-              <svg class="max-h-full max-w-full rounded-xl" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+            <div class="w-full h-3/4 bg-rose-100 flex items-center justify-center p-3">
+              <!-- SVG representation of Star Gazing -->
+              <svg class="h-full w-full max-h-full max-w-full rounded-xl object-contain" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
                 <defs>
                   <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
                     <stop offset="0%" style="stop-color:#0f172a;stop-opacity:1" />
@@ -281,178 +302,160 @@
                   </linearGradient>
                 </defs>
                 <rect width="400" height="300" fill="url(#grad1)" rx="10"/>
-                <!-- Stars -->
                 <circle cx="50" cy="50" r="1.5" fill="#fff" opacity="0.8"/>
                 <circle cx="120" cy="80" r="1" fill="#fff" opacity="0.5"/>
                 <circle cx="280" cy="40" r="2" fill="#fff" opacity="0.9"/>
                 <circle cx="350" cy="120" r="1.5" fill="#fff" opacity="0.6"/>
-                <!-- Moon -->
                 <path d="M 330 50 A 25 25 0 1 0 330 90 A 28 28 0 1 1 330 50 Z" fill="#fef08a" />
-                <!-- Silhouettes -->
                 <path d="M120 300 C150 220, 170 210, 190 300 Z" fill="#020617"/>
                 <path d="M210 300 C230 200, 250 210, 280 300 Z" fill="#020617"/>
                 <path d="M160 210 C180 180, 220 180, 240 210 Z" fill="#020617"/>
-                <!-- Glowing Heart -->
                 <path d="M200 160 C190 145, 165 145, 165 165 C165 185, 200 210, 200 210 C200 210, 235 185, 235 165 C235 145, 210 145, 200 160 Z" fill="#ec4899" opacity="0.8" class="love-pulse"/>
               </svg>
             </div>
-            <div class="h-1/5 bg-white flex flex-col justify-center items-center px-4 text-center">
-              <h4 class="font-bold text-rose-800 text-base md:text-lg">Where our dreams align under the same sky ✨</h4>
-              <p class="text-xs text-gray-500">Every star holds a promise of my love for you.</p>
+            <div class="h-1/4 bg-white flex flex-col justify-center items-center px-3 text-center">
+              <h4 class="font-bold text-rose-800 text-xs xs:text-sm sm:text-base leading-tight">Where our dreams align under the same sky ✨</h4>
+              <p class="text-[10px] xs:text-xs text-gray-500 mt-0.5">Every star holds a promise of my love for you.</p>
             </div>
           </div>
 
           <!-- Slide 2 -->
           <div class="slide absolute inset-0 opacity-0 transition-opacity duration-1000 ease-in-out flex flex-col">
-            <div class="w-full h-4/5 bg-rose-100 flex items-center justify-center p-4">
-              <!-- Visual placeholder representation of Café Date -->
-              <svg class="max-h-full max-w-full rounded-xl" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+            <div class="w-full h-3/4 bg-rose-100 flex items-center justify-center p-3">
+              <!-- SVG representation of Café Date -->
+              <svg class="h-full w-full max-h-full max-w-full rounded-xl object-contain" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
                 <rect width="400" height="300" fill="#fef2f2" rx="10"/>
                 <circle cx="200" cy="150" r="100" fill="#fecdd3" opacity="0.3"/>
-                <!-- Coffee Mugs -->
                 <path d="M 140 180 L 180 180 L 175 220 L 145 220 Z" fill="#be123c"/>
                 <path d="M 140 190 A 15 15 0 0 0 140 210" fill="none" stroke="#be123c" stroke-width="4"/>
-                
                 <path d="M 220 180 L 260 180 L 255 220 L 225 220 Z" fill="#fda4af"/>
                 <path d="M 260 190 A 15 15 0 0 1 260 210" fill="none" stroke="#fda4af" stroke-width="4"/>
-                <!-- Hearts rising from coffee -->
                 <path d="M160 160 C155 150, 140 150, 140 160 C140 170, 160 180, 160 180 C160 180, 180 170, 180 160 C180 150, 165 150, 160 160 Z" fill="#f43f5e"/>
                 <path d="M240 150 C235 140, 220 140, 220 150 C220 160, 240 170, 240 170 C240 170, 260 160, 260 150 C260 140, 245 140, 240 150 Z" fill="#f43f5e"/>
-                <!-- Steam lines -->
                 <path d="M 155 140 Q 160 130 155 120" fill="none" stroke="#be123c" stroke-width="2"/>
                 <path d="M 245 130 Q 240 120 245 110" fill="none" stroke="#fda4af" stroke-width="2"/>
               </svg>
             </div>
-            <div class="h-1/5 bg-white flex flex-col justify-center items-center px-4 text-center">
-              <h4 class="font-bold text-rose-800 text-base md:text-lg">To endless talks and warm coffee dates ☕</h4>
-              <p class="text-xs text-gray-500">I could talk to you forever, and still need five more minutes.</p>
+            <div class="h-1/4 bg-white flex flex-col justify-center items-center px-3 text-center">
+              <h4 class="font-bold text-rose-800 text-xs xs:text-sm sm:text-base leading-tight">To endless talks and warm coffee dates ☕</h4>
+              <p class="text-[10px] xs:text-xs text-gray-500 mt-0.5">I could talk to you forever, and still need five more minutes.</p>
             </div>
           </div>
 
           <!-- Slide 3 -->
           <div class="slide absolute inset-0 opacity-0 transition-opacity duration-1000 ease-in-out flex flex-col">
-            <div class="w-full h-4/5 bg-rose-100 flex items-center justify-center p-4">
-              <!-- Visual placeholder representation of Rainy Walk -->
-              <svg class="max-h-full max-w-full rounded-xl" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+            <div class="w-full h-3/4 bg-rose-100 flex items-center justify-center p-3">
+              <!-- SVG representation of Rainy Walk -->
+              <svg class="h-full w-full max-h-full max-w-full rounded-xl object-contain" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
                 <rect width="400" height="300" fill="#ecfeff" rx="10"/>
-                <!-- Rain -->
                 <line x1="50" y1="20" x2="45" y2="50" stroke="#a5f3fc" stroke-width="1.5"/>
                 <line x1="120" y1="40" x2="115" y2="70" stroke="#a5f3fc" stroke-width="1.5"/>
                 <line x1="280" y1="10" x2="275" y2="40" stroke="#a5f3fc" stroke-width="1.5"/>
                 <line x1="340" y1="50" x2="335" y2="80" stroke="#a5f3fc" stroke-width="1.5"/>
-                <!-- Umbrella -->
                 <path d="M 130 150 A 70 70 0 0 1 270 150 Z" fill="#f43f5e"/>
                 <line x1="200" y1="150" x2="200" y2="230" stroke="#475569" stroke-width="4"/>
                 <path d="M 200 230 A 10 10 0 0 0 215 230" fill="none" stroke="#475569" stroke-width="4"/>
-                <!-- Silhouette Lovers -->
                 <ellipse cx="180" cy="180" rx="10" ry="12" fill="#334155"/>
                 <ellipse cx="220" cy="180" rx="10" ry="12" fill="#334155"/>
                 <rect x="172" y="192" width="16" height="40" rx="4" fill="#334155"/>
                 <rect x="212" y="192" width="16" height="40" rx="4" fill="#334155"/>
               </svg>
             </div>
-            <div class="h-1/5 bg-white flex flex-col justify-center items-center px-4 text-center">
-              <h4 class="font-bold text-rose-800 text-base md:text-lg">Weathering any storm, as long as it's with you 🌧️</h4>
-              <p class="text-xs text-gray-500">Under my umbrella, you'll always have a safe space.</p>
+            <div class="h-1/4 bg-white flex flex-col justify-center items-center px-3 text-center">
+              <h4 class="font-bold text-rose-800 text-xs xs:text-sm sm:text-base leading-tight">Weathering any storm, as long as it's with you 🌧️</h4>
+              <p class="text-[10px] xs:text-xs text-gray-500 mt-0.5">Under my umbrella, you'll always have a safe space.</p>
             </div>
           </div>
 
           <!-- Slide 4 -->
           <div class="slide absolute inset-0 opacity-0 transition-opacity duration-1000 ease-in-out flex flex-col">
-            <div class="w-full h-4/5 bg-rose-100 flex items-center justify-center p-4">
-              <!-- Visual placeholder representation of Holding Hands -->
-              <svg class="max-h-full max-w-full rounded-xl" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+            <div class="w-full h-3/4 bg-rose-100 flex items-center justify-center p-3">
+              <!-- SVG representation of Holding Hands -->
+              <svg class="h-full w-full max-h-full max-w-full rounded-xl object-contain" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
                 <rect width="400" height="300" fill="#fff5f5" rx="10"/>
-                <!-- Heart Hands outline representation -->
                 <path d="M150,150 Q170,110 200,150 T250,150 Q220,200 200,220 T150,150" fill="#fda4af" stroke="#e11d48" stroke-width="4"/>
                 <circle cx="200" cy="150" r="10" fill="#fff" opacity="0.8"/>
                 <path d="M190 145 C185 135, 170 135, 170 145 C170 155, 190 165, 190 165 C190 165, 210 155, 210 145 C210 135, 195 135, 190 145 Z" fill="#e11d48"/>
               </svg>
             </div>
-            <div class="h-1/5 bg-white flex flex-col justify-center items-center px-4 text-center">
-              <h4 class="font-bold text-rose-800 text-base md:text-lg">Your fingers intertwined with mine is home 🤝</h4>
-              <p class="text-xs text-gray-500">An unbreakable bond, a promises written in hearts.</p>
+            <div class="h-1/4 bg-white flex flex-col justify-center items-center px-3 text-center">
+              <h4 class="font-bold text-rose-800 text-xs xs:text-sm sm:text-base leading-tight">Your fingers intertwined with mine is home 🤝</h4>
+              <p class="text-[10px] xs:text-xs text-gray-500 mt-0.5">An unbreakable bond, a promises written in hearts.</p>
             </div>
           </div>
 
           <!-- Slide 5 -->
           <div class="slide absolute inset-0 opacity-0 transition-opacity duration-1000 ease-in-out flex flex-col">
-            <div class="w-full h-4/5 bg-rose-100 flex items-center justify-center p-4">
-              <!-- Visual placeholder representation of Roadtrip/Travel -->
-              <svg class="max-h-full max-w-full rounded-xl" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+            <div class="w-full h-3/4 bg-rose-100 flex items-center justify-center p-3">
+              <!-- SVG representation of Roadtrip -->
+              <svg class="h-full w-full max-h-full max-w-full rounded-xl object-contain" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
                 <rect width="400" height="300" fill="#f0fdf4" rx="10"/>
-                <!-- Sun & Mountains -->
                 <circle cx="200" cy="150" r="40" fill="#fef08a"/>
                 <path d="M 0 300 L 120 180 L 250 300 Z" fill="#86efac"/>
                 <path d="M 150 300 L 280 150 L 400 300 Z" fill="#4ade80"/>
-                <!-- Road -->
                 <path d="M 180 300 L 200 200 L 220 300 Z" fill="#64748b"/>
                 <line x1="200" y1="300" x2="200" y2="200" stroke="#fff" stroke-dasharray="5 5" stroke-width="2"/>
               </svg>
             </div>
-            <div class="h-1/5 bg-white flex flex-col justify-center items-center px-4 text-center">
-              <h4 class="font-bold text-rose-800 text-base md:text-lg">To many more adventures and crazy journeys 🚗</h4>
-              <p class="text-xs text-gray-500">Every destination is beautiful when you are the co-passenger.</p>
+            <div class="h-1/4 bg-white flex flex-col justify-center items-center px-3 text-center">
+              <h4 class="font-bold text-rose-800 text-xs xs:text-sm sm:text-base leading-tight">To many more adventures and crazy journeys 🚗</h4>
+              <p class="text-[10px] xs:text-xs text-gray-500 mt-0.5">Every destination is beautiful when you are the co-passenger.</p>
             </div>
           </div>
 
           <!-- Slide 6 -->
           <div class="slide absolute inset-0 opacity-0 transition-opacity duration-1000 ease-in-out flex flex-col">
-            <div class="w-full h-4/5 bg-rose-100 flex items-center justify-center p-4">
-              <!-- Visual representation of Love Balloon / Celebration -->
-              <svg class="max-h-full max-w-full rounded-xl" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+            <div class="w-full h-3/4 bg-rose-100 flex items-center justify-center p-3">
+              <!-- SVG representation of Love Celebration -->
+              <svg class="h-full w-full max-h-full max-w-full rounded-xl object-contain" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
                 <rect width="400" height="300" fill="#faf5ff" rx="10"/>
-                <!-- Floating balloons -->
                 <path d="M120 100 C100 60, 60 60, 60 100 C60 140, 120 180, 120 180 C120 180, 180 140, 180 100 C180 60, 140 60, 120 100 Z" fill="#d8b4fe"/>
                 <path d="M280 130 C260 90, 220 90, 220 130 C220 170, 280 210, 280 210 C280 210, 340 170, 340 130 C340 90, 300 90, 280 130 Z" fill="#e879f9"/>
-                <!-- Strings -->
                 <path d="M 120 180 Q 110 210 130 240" fill="none" stroke="#c084fc" stroke-width="2"/>
                 <path d="M 280 210 Q 290 230 270 260" fill="none" stroke="#f472b6" stroke-width="2"/>
               </svg>
             </div>
-            <div class="h-1/5 bg-white flex flex-col justify-center items-center px-4 text-center">
-              <h4 class="font-bold text-rose-800 text-base md:text-lg">Happiest Birthday again, my forever boy! 🎂🎈</h4>
-              <p class="text-xs text-gray-500">Forever bound, eternally happy. Yours, Kanak.</p>
+            <div class="h-1/4 bg-white flex flex-col justify-center items-center px-3 text-center">
+              <h4 class="font-bold text-rose-800 text-xs xs:text-sm sm:text-base leading-tight">Happiest Birthday again, my forever boy! 🎂🎈</h4>
+              <p class="text-[10px] xs:text-xs text-gray-500 mt-0.5">Forever bound, eternally happy. Yours, Kanak.</p>
             </div>
           </div>
 
-          <!-- Slide Controls -->
-          <button onclick="prevSlide()" class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/70 hover:bg-white text-rose-600 rounded-full w-10 h-10 flex items-center justify-center shadow-md hover:shadow-lg transition-all transform active:scale-95">
-            <i class="fas fa-chevron-left"></i>
+          <!-- Slide Controls (Sized for Mobile Taps) -->
+          <button onclick="prevSlide()" class="absolute left-2.5 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-rose-600 rounded-full w-9 h-9 xs:w-11 xs:h-11 flex items-center justify-center shadow-md active:scale-90 z-20">
+            <i class="fas fa-chevron-left text-sm xs:text-base"></i>
           </button>
-          <button onclick="nextSlide()" class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/70 hover:bg-white text-rose-600 rounded-full w-10 h-10 flex items-center justify-center shadow-md hover:shadow-lg transition-all transform active:scale-95">
-            <i class="fas fa-chevron-right"></i>
+          <button onclick="nextSlide()" class="absolute right-2.5 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-rose-600 rounded-full w-9 h-9 xs:w-11 xs:h-11 flex items-center justify-center shadow-md active:scale-90 z-20">
+            <i class="fas fa-chevron-right text-sm xs:text-base"></i>
           </button>
 
-          <!-- Instructions on swapping real photos -->
-          <div class="absolute bottom-2 left-2 bg-black/60 text-[10px] text-white px-2 py-0.5 rounded backdrop-blur-sm">
-            💡 Tap left/right to browse. Replace SVG placeholders with your actual romantic snaps!
+          <!-- Interactive Mobile Tip -->
+          <div class="absolute bottom-2 left-2 bg-black/60 text-[8px] xs:text-[10px] text-white px-2 py-0.5 rounded backdrop-blur-sm pointer-events-none">
+            💡 Replace SVGs with your real pictures inside the code!
           </div>
 
         </div>
       </div>
 
       <!-- INTERACTIVE LOVE NOTES SECTION -->
-      <div class="bg-white/85 backdrop-blur-md rounded-3xl p-6 md:p-8 shadow-xl border-2 border-pink-100 text-center">
-        <span class="px-3 py-1 rounded-full bg-pink-100 text-pink-700 text-xs font-bold uppercase tracking-widest">Interactive Wishes</span>
-        <h2 class="text-2xl md:text-3xl font-bold text-rose-800 mt-2 mb-2">Click to Open My Heart Letters</h2>
-        <p class="text-sm text-gray-500 mb-8">Each envelope holds a unique promise from Kanak. Unveil them all!</p>
+      <div class="bg-white/90 backdrop-blur-md rounded-3xl p-5 xs:p-6 sm:p-8 shadow-xl border border-pink-100 text-center">
+        <span class="px-2.5 py-0.5 rounded-full bg-pink-100 text-pink-700 text-[10px] font-bold uppercase tracking-widest">Interactive Wishes</span>
+        <h2 class="text-xl xs:text-2xl font-bold text-rose-800 mt-1 mb-1">Click to Open My Heart Letters</h2>
+        <p class="text-xs text-gray-500 mb-6">Each envelope holds a unique promise from Kanak. Unveil them all!</p>
 
         <!-- Grid of Envelopes -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           
           <!-- Note Card 1 -->
-          <div class="flip-card cursor-pointer h-48 rounded-2xl" onclick="toggleFlipCard(this)">
-            <div class="flip-card-inner relative w-full h-full text-center rounded-2xl shadow-md bg-pink-50 border border-pink-100">
-              <!-- Front -->
-              <div class="flip-card-front absolute inset-0 flex flex-col items-center justify-center p-4">
-                <i class="fas fa-envelope-open-text text-rose-500 text-4xl mb-2 animate-bounce"></i>
-                <h4 class="font-bold text-rose-800">My Promise of Support 🌟</h4>
-                <p class="text-xs text-rose-400 mt-1">Tap to open letter</p>
+          <div class="flip-card cursor-pointer h-40 xs:h-44 rounded-2xl" onclick="toggleFlipCard(this)">
+            <div class="flip-card-inner relative w-full h-full text-center rounded-2xl shadow-sm bg-pink-50/50 border border-pink-100">
+              <div class="flip-card-front absolute inset-0 flex flex-col items-center justify-center p-3">
+                <i class="fas fa-envelope-open-text text-rose-500 text-3xl mb-2 animate-bounce"></i>
+                <h4 class="font-bold text-xs xs:text-sm text-rose-800">My Promise of Support 🌟</h4>
+                <p class="text-[9px] xs:text-[10px] text-rose-400 mt-0.5">Tap to open letter</p>
               </div>
-              <!-- Back -->
-              <div class="flip-card-back absolute inset-0 bg-gradient-to-br from-rose-500 to-pink-600 text-white rounded-2xl p-6 flex flex-col justify-center items-center overflow-auto">
-                <p class="font-handwritten text-xl leading-relaxed text-center">
+              <div class="flip-card-back absolute inset-0 bg-gradient-to-br from-rose-500 to-pink-600 text-white rounded-2xl p-4 flex flex-col justify-center items-center overflow-auto">
+                <p class="font-handwritten text-base xs:text-lg sm:text-xl leading-relaxed text-center">
                   "No matter how tough the path gets, you will always find me walking right beside you, holding your hand. I believe in you even when you doubt yourself."
                 </p>
               </div>
@@ -460,17 +463,15 @@
           </div>
 
           <!-- Note Card 2 -->
-          <div class="flip-card cursor-pointer h-48 rounded-2xl" onclick="toggleFlipCard(this)">
-            <div class="flip-card-inner relative w-full h-full text-center rounded-2xl shadow-md bg-pink-50 border border-pink-100">
-              <!-- Front -->
-              <div class="flip-card-front absolute inset-0 flex flex-col items-center justify-center p-4">
-                <i class="fas fa-envelope-open-text text-rose-500 text-4xl mb-2 animate-bounce"></i>
-                <h4 class="font-bold text-rose-800">The Comfort Letter 🧸</h4>
-                <p class="text-xs text-rose-400 mt-1">Tap to open letter</p>
+          <div class="flip-card cursor-pointer h-40 xs:h-44 rounded-2xl" onclick="toggleFlipCard(this)">
+            <div class="flip-card-inner relative w-full h-full text-center rounded-2xl shadow-sm bg-pink-50/50 border border-pink-100">
+              <div class="flip-card-front absolute inset-0 flex flex-col items-center justify-center p-3">
+                <i class="fas fa-envelope-open-text text-rose-500 text-3xl mb-2 animate-bounce"></i>
+                <h4 class="font-bold text-xs xs:text-sm text-rose-800">The Comfort Letter 🧸</h4>
+                <p class="text-[9px] xs:text-[10px] text-rose-400 mt-0.5">Tap to open letter</p>
               </div>
-              <!-- Back -->
-              <div class="flip-card-back absolute inset-0 bg-gradient-to-br from-rose-500 to-pink-600 text-white rounded-2xl p-6 flex flex-col justify-center items-center overflow-auto">
-                <p class="font-handwritten text-xl leading-relaxed text-center">
+              <div class="flip-card-back absolute inset-0 bg-gradient-to-br from-rose-500 to-pink-600 text-white rounded-2xl p-4 flex flex-col justify-center items-center overflow-auto">
+                <p class="font-handwritten text-base xs:text-lg sm:text-xl leading-relaxed text-center">
                   "Whenever you feel tired, my arms are open for you. Consider me your personal warm blanket and cozy little escape from the entire world."
                 </p>
               </div>
@@ -478,17 +479,15 @@
           </div>
 
           <!-- Note Card 3 -->
-          <div class="flip-card cursor-pointer h-48 rounded-2xl" onclick="toggleFlipCard(this)">
-            <div class="flip-card-inner relative w-full h-full text-center rounded-2xl shadow-md bg-pink-50 border border-pink-100">
-              <!-- Front -->
-              <div class="flip-card-front absolute inset-0 flex flex-col items-center justify-center p-4">
-                <i class="fas fa-envelope-open-text text-rose-500 text-4xl mb-2 animate-bounce"></i>
-                <h4 class="font-bold text-rose-800">My Promise of Love Infinity ♾️</h4>
-                <p class="text-xs text-rose-400 mt-1">Tap to open letter</p>
+          <div class="flip-card cursor-pointer h-40 xs:h-44 rounded-2xl" onclick="toggleFlipCard(this)">
+            <div class="flip-card-inner relative w-full h-full text-center rounded-2xl shadow-sm bg-pink-50/50 border border-pink-100">
+              <div class="flip-card-front absolute inset-0 flex flex-col items-center justify-center p-3">
+                <i class="fas fa-envelope-open-text text-rose-500 text-3xl mb-2 animate-bounce"></i>
+                <h4 class="font-bold text-xs xs:text-sm text-rose-800">Love Infinity ♾️</h4>
+                <p class="text-[9px] xs:text-[10px] text-rose-400 mt-0.5">Tap to open letter</p>
               </div>
-              <!-- Back -->
-              <div class="flip-card-back absolute inset-0 bg-gradient-to-br from-rose-500 to-pink-600 text-white rounded-2xl p-6 flex flex-col justify-center items-center overflow-auto">
-                <p class="font-handwritten text-xl leading-relaxed text-center">
+              <div class="flip-card-back absolute inset-0 bg-gradient-to-br from-rose-500 to-pink-600 text-white rounded-2xl p-4 flex flex-col justify-center items-center overflow-auto">
+                <p class="font-handwritten text-base xs:text-lg sm:text-xl leading-relaxed text-center">
                   "My love for you grows with each passing second. It is a flame that won't ever fade. I promise to cherish and worship your smile forever."
                 </p>
               </div>
@@ -496,54 +495,48 @@
           </div>
 
           <!-- Note Card 4 -->
-          <div class="flip-card cursor-pointer h-48 rounded-2xl" onclick="toggleFlipCard(this)">
-            <div class="flip-card-inner relative w-full h-full text-center rounded-2xl shadow-md bg-pink-50 border border-pink-100">
-              <!-- Front -->
-              <div class="flip-card-front absolute inset-0 flex flex-col items-center justify-center p-4">
-                <i class="fas fa-envelope-open-text text-rose-500 text-4xl mb-2 animate-bounce"></i>
-                <h4 class="font-bold text-rose-800">Our Fun Adventures 🎒</h4>
-                <p class="text-xs text-rose-400 mt-1">Tap to open letter</p>
+          <div class="flip-card cursor-pointer h-40 xs:h-44 rounded-2xl" onclick="toggleFlipCard(this)">
+            <div class="flip-card-inner relative w-full h-full text-center rounded-2xl shadow-sm bg-pink-50/50 border border-pink-100">
+              <div class="flip-card-front absolute inset-0 flex flex-col items-center justify-center p-3">
+                <i class="fas fa-envelope-open-text text-rose-500 text-3xl mb-2 animate-bounce"></i>
+                <h4 class="font-bold text-xs xs:text-sm text-rose-800">Our Fun Adventures 🎒</h4>
+                <p class="text-[9px] xs:text-[10px] text-rose-400 mt-0.5">Tap to open letter</p>
               </div>
-              <!-- Back -->
-              <div class="flip-card-back absolute inset-0 bg-gradient-to-br from-rose-500 to-pink-600 text-white rounded-2xl p-6 flex flex-col justify-center items-center overflow-auto">
-                <p class="font-handwritten text-xl leading-relaxed text-center">
-                  "I promise to eat all your favorite foods, accompany you to weird hobbies, and ensure we complete our epic bucket lists. No matter what, it's always you and me."
+              <div class="flip-card-back absolute inset-0 bg-gradient-to-br from-rose-500 to-pink-600 text-white rounded-2xl p-4 flex flex-col justify-center items-center overflow-auto">
+                <p class="font-handwritten text-base xs:text-lg sm:text-xl leading-relaxed text-center">
+                  "I promise to eat all your favorite foods, accompany you to weird hobbies, and ensure we complete our epic bucket lists. It's always you and me."
                 </p>
               </div>
             </div>
           </div>
 
           <!-- Note Card 5 -->
-          <div class="flip-card cursor-pointer h-48 rounded-2xl" onclick="toggleFlipCard(this)">
-            <div class="flip-card-inner relative w-full h-full text-center rounded-2xl shadow-md bg-pink-50 border border-pink-100">
-              <!-- Front -->
-              <div class="flip-card-front absolute inset-0 flex flex-col items-center justify-center p-4">
-                <i class="fas fa-envelope-open-text text-rose-500 text-4xl mb-2 animate-bounce"></i>
-                <h4 class="font-bold text-rose-800">Our Future Days 🏡</h4>
-                <p class="text-xs text-rose-400 mt-1">Tap to open letter</p>
+          <div class="flip-card cursor-pointer h-40 xs:h-44 rounded-2xl" onclick="toggleFlipCard(this)">
+            <div class="flip-card-inner relative w-full h-full text-center rounded-2xl shadow-sm bg-pink-50/50 border border-pink-100">
+              <div class="flip-card-front absolute inset-0 flex flex-col items-center justify-center p-3">
+                <i class="fas fa-envelope-open-text text-rose-500 text-3xl mb-2 animate-bounce"></i>
+                <h4 class="font-bold text-xs xs:text-sm text-rose-800">Our Future Days 🏡</h4>
+                <p class="text-[9px] xs:text-[10px] text-rose-400 mt-0.5">Tap to open letter</p>
               </div>
-              <!-- Back -->
-              <div class="flip-card-back absolute inset-0 bg-gradient-to-br from-rose-500 to-pink-600 text-white rounded-2xl p-6 flex flex-col justify-center items-center overflow-auto">
-                <p class="font-handwritten text-xl leading-relaxed text-center">
-                  "I dream of waking up next to you, cooking terrible but loving breakfasts together, and building a cozy castle where love knows no bounds. You are my home, Vivek."
+              <div class="flip-card-back absolute inset-0 bg-gradient-to-br from-rose-500 to-pink-600 text-white rounded-2xl p-4 flex flex-col justify-center items-center overflow-auto">
+                <p class="font-handwritten text-base xs:text-lg sm:text-xl leading-relaxed text-center">
+                  "I dream of waking up next to you, cooking terrible but loving breakfasts together, and building a cozy castle where love knows no bounds."
                 </p>
               </div>
             </div>
           </div>
 
           <!-- Note Card 6 -->
-          <div class="flip-card cursor-pointer h-48 rounded-2xl" onclick="toggleFlipCard(this)">
-            <div class="flip-card-inner relative w-full h-full text-center rounded-2xl shadow-md bg-pink-50 border border-pink-100">
-              <!-- Front -->
-              <div class="flip-card-front absolute inset-0 flex flex-col items-center justify-center p-4">
-                <i class="fas fa-envelope-open-text text-rose-500 text-4xl mb-2 animate-bounce"></i>
-                <h4 class="font-bold text-rose-800">For Gloomy Days 🌧️</h4>
-                <p class="text-xs text-rose-400 mt-1">Tap to open letter</p>
+          <div class="flip-card cursor-pointer h-40 xs:h-44 rounded-2xl" onclick="toggleFlipCard(this)">
+            <div class="flip-card-inner relative w-full h-full text-center rounded-2xl shadow-sm bg-pink-50/50 border border-pink-100">
+              <div class="flip-card-front absolute inset-0 flex flex-col items-center justify-center p-3">
+                <i class="fas fa-envelope-open-text text-rose-500 text-3xl mb-2 animate-bounce"></i>
+                <h4 class="font-bold text-xs xs:text-sm text-rose-800">For Gloomy Days 🌧️</h4>
+                <p class="text-[9px] xs:text-[10px] text-rose-400 mt-0.5">Tap to open letter</p>
               </div>
-              <!-- Back -->
-              <div class="flip-card-back absolute inset-0 bg-gradient-to-br from-rose-500 to-pink-600 text-white rounded-2xl p-6 flex flex-col justify-center items-center overflow-auto">
-                <p class="font-handwritten text-xl leading-relaxed text-center">
-                  "If we ever fight or argue, please read this. I may get mad, but my love for you is absolute. I will choose you over and over again, in every lifetime."
+              <div class="flip-card-back absolute inset-0 bg-gradient-to-br from-rose-500 to-pink-600 text-white rounded-2xl p-4 flex flex-col justify-center items-center overflow-auto">
+                <p class="font-handwritten text-base xs:text-lg sm:text-xl leading-relaxed text-center">
+                  "If we ever fight, please read this. I may get mad, but my love is absolute. I will choose you over and over again, in every single lifetime."
                 </p>
               </div>
             </div>
@@ -552,23 +545,23 @@
         </div>
       </div>
 
-      <!-- COUPLE MEMORY STATS (Cute counters) -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-        <div class="bg-white/80 backdrop-blur-md rounded-2xl p-4 shadow border border-pink-100">
-          <div class="text-3xl font-bold text-rose-600 font-romantic">365+</div>
-          <div class="text-xs text-gray-500 uppercase tracking-widest mt-1">Days of Smiles</div>
+      <!-- COUPLE MEMORY STATS -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
+        <div class="bg-white/80 backdrop-blur-md rounded-2xl p-3 shadow border border-pink-100">
+          <div class="text-2xl font-bold text-rose-600 font-romantic">365+</div>
+          <div class="text-[9px] xs:text-[10px] text-gray-500 uppercase tracking-wider mt-0.5">Days of Smiles</div>
         </div>
-        <div class="bg-white/80 backdrop-blur-md rounded-2xl p-4 shadow border border-pink-100">
-          <div class="text-3xl font-bold text-rose-600 font-romantic">10,000+</div>
-          <div class="text-xs text-gray-500 uppercase tracking-widest mt-1">Sweet Laughs</div>
+        <div class="bg-white/80 backdrop-blur-md rounded-2xl p-3 shadow border border-pink-100">
+          <div class="text-2xl font-bold text-rose-600 font-romantic">10,000+</div>
+          <div class="text-[9px] xs:text-[10px] text-gray-500 uppercase tracking-wider mt-0.5">Sweet Laughs</div>
         </div>
-        <div class="bg-white/80 backdrop-blur-md rounded-2xl p-4 shadow border border-pink-100">
-          <div class="text-3xl font-bold text-rose-600 font-romantic">Infinite</div>
-          <div class="text-xs text-gray-500 uppercase tracking-widest mt-1">Warm Hugs</div>
+        <div class="bg-white/80 backdrop-blur-md rounded-2xl p-3 shadow border border-pink-100">
+          <div class="text-2xl font-bold text-rose-600 font-romantic">Infinite</div>
+          <div class="text-[9px] xs:text-[10px] text-gray-500 uppercase tracking-wider mt-0.5">Warm Hugs</div>
         </div>
-        <div class="bg-white/80 backdrop-blur-md rounded-2xl p-4 shadow border border-pink-100">
-          <div class="text-3xl font-bold text-rose-600 font-romantic">1</div>
-          <div class="text-xs text-gray-500 uppercase tracking-widest mt-1">True Destiny</div>
+        <div class="bg-white/80 backdrop-blur-md rounded-2xl p-3 shadow border border-pink-100">
+          <div class="text-2xl font-bold text-rose-600 font-romantic">1</div>
+          <div class="text-[9px] xs:text-[10px] text-gray-500 uppercase tracking-wider mt-0.5">True Destiny</div>
         </div>
       </div>
 
@@ -576,10 +569,10 @@
 
   </main>
 
-  <!-- Interactive Footer -->
-  <footer class="w-full text-center py-6 px-4 border-t border-pink-200 bg-white/50 backdrop-blur-sm z-10 text-xs text-rose-700">
-    <p class="font-medium">Made with all the love in the universe by <strong class="text-rose-600">Kanak</strong> for her forever boy <strong class="text-rose-600">Vivek</strong>.</p>
-    <p class="text-[10px] text-gray-400 mt-1">© 2026 Vivek & Kanak Love Chronicles. All Rights Reserved.</p>
+  <!-- Responsive Footer -->
+  <footer class="w-full text-center py-4 px-4 border-t border-pink-200 bg-white/40 backdrop-blur-sm z-10 text-[10px] xs:text-xs text-rose-700">
+    <p class="font-semibold">Made with all the love in the universe by <strong class="text-rose-600">Kanak</strong> for her forever boy <strong class="text-rose-600">Vivek</strong>.</p>
+    <p class="text-[9px] text-gray-400 mt-0.5">© 2026 Vivek & Kanak Love Chronicles. All Rights Reserved.</p>
   </footer>
 
   <!-- CUSTOM SCRIPTS -->
@@ -587,9 +580,9 @@
     // Quiz Questions Data from Kanak to Vivek
     const quizData = [
       {
-        question: "Do you enjoy spending time with me ? ✨",
+        question: "Do you believe that destiny specifically wrote 'Kanak + Vivek' in the stars? ✨",
         yesResponse: "Perfect answer! We are written in the stars forever. ⭐",
-        noType: "dodge" // Try to escape on hovering/tapping 'No'
+        noType: "dodge" 
       },
       {
         question: "Who is the cutest and the most caring partner in this beautiful relationship?",
@@ -605,7 +598,7 @@
       {
         question: "Do you miss Kanak when you aren't talking to her, even for a single minute?",
         yesResponse: "Aww! I miss you so much more too! 🥺💖",
-        noType: "shrink" // The No button gets smaller and smaller!
+        noType: "shrink" 
       },
       {
         question: "Finally, do you agree that you are the luckiest boyfriend in the entire world? 😉",
@@ -618,7 +611,7 @@
     let dodgeCount = 0;
     let noBtnScale = 1.0;
 
-    // Background floating hearts manager
+    // Mobile-optimized floating background hearts
     function initHeartsGenerator() {
       const container = document.getElementById('hearts-bg');
       const emojis = ['❤️', '💖', '💘', '💕', '✨', '🌸', '🌹'];
@@ -628,11 +621,10 @@
         heart.classList.add('floating-heart');
         heart.innerText = emojis[Math.floor(Math.random() * emojis.length)];
         
-        // Random styles
-        const size = Math.floor(Math.random() * 24) + 12; // 12px to 36px
-        const leftPos = Math.random() * 100; // 0 to 100vw
-        const duration = Math.random() * 6 + 4; // 4 to 10s
-        const delay = Math.random() * 3; // 0 to 3s
+        const size = Math.floor(Math.random() * 20) + 12; // 12px to 32px
+        const leftPos = Math.random() * 95; // Limit slightly to prevent overflows
+        const duration = Math.random() * 5 + 4; // 4 to 9s
+        const delay = Math.random() * 2;
 
         heart.style.fontSize = `${size}px`;
         heart.style.left = `${leftPos}vw`;
@@ -641,14 +633,13 @@
         
         container.appendChild(heart);
 
-        // Remove element after animation ends
         setTimeout(() => {
           heart.remove();
         }, (duration + delay) * 1000);
-      }, 400);
+      }, 500); // Slower interval for mobile performance
     }
 
-    // Interactive Sparkle Generator on mouse/touch
+    // Sparkle generator
     function generateSparkle(x, y) {
       const container = document.getElementById('sparkle-layer');
       const sparkle = document.createElement('div');
@@ -659,23 +650,23 @@
 
       setTimeout(() => {
         sparkle.remove();
-      }, 1500);
+      }, 1200);
     }
 
     window.addEventListener('mousemove', (e) => {
-      if (Math.random() < 0.15) { // Limit density
+      if (Math.random() < 0.1) {
         generateSparkle(e.clientX, e.clientY);
       }
     });
 
     window.addEventListener('touchmove', (e) => {
-      if (Math.random() < 0.2) {
-        const touch = e.touches;
+      if (Math.random() < 0.15 && e.touches.length > 0) {
+        const touch = e.touches[0];
         generateSparkle(touch.clientX, touch.clientY);
       }
-    });
+    }, { passive: true });
 
-    // Music Handler with Synthesis Fallback if direct audio block occurs
+    // Music Handler & Synthesized fallbacks
     const musicBtn = document.getElementById('music-toggle');
     const musicIcon = document.getElementById('music-icon');
     const musicToast = document.getElementById('music-toast');
@@ -684,14 +675,12 @@
     let synthInterval;
 
     function playRomanticSynth() {
-      // Create fallback gentle romantic chord progression using Web Audio API
       try {
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         if (!AudioContext) return;
         const ctx = new AudioContext();
         
-        // Simple gentle lullaby notes to simulate piano background
-        const notes = [261.63, 329.63, 392.00, 523.25, 349.23, 440.00, 523.25, 392.00]; // C, E, G, C, F, A, C, G
+        const notes = [261.63, 329.63, 392.00, 523.25, 349.23, 440.00, 523.25, 392.00]; 
         let step = 0;
 
         synthInterval = setInterval(() => {
@@ -702,7 +691,7 @@
           osc.type = 'sine';
           osc.frequency.setValueAtTime(notes[step % notes.length], ctx.currentTime);
           
-          gain.gain.setValueAtTime(0.05, ctx.currentTime);
+          gain.gain.setValueAtTime(0.04, ctx.currentTime);
           gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.8);
           
           osc.connect(gain);
@@ -714,7 +703,7 @@
           step++;
         }, 1200);
       } catch (err) {
-        console.log("Audio synthesis not supported or blocked");
+        console.log("Audio synth blocked");
       }
     }
 
@@ -726,12 +715,10 @@
         showToast("Music Paused 🔇");
         isPlaying = false;
       } else {
-        // Attempt audio playback
         audio.play().then(() => {
           musicIcon.className = 'fas fa-heart text-rose-500 fa-spin';
           showToast("Music Playing ❤️");
         }).catch(() => {
-          // Fallback to custom synthesized notes if browser blocks soundhelix
           playRomanticSynth();
           musicIcon.className = 'fas fa-heart text-rose-500 fa-spin';
           showToast("Synth Music On ✨");
@@ -745,30 +732,26 @@
       musicToast.style.opacity = '1';
       setTimeout(() => {
         musicToast.style.opacity = '0';
-      }, 2500);
+      }, 2000);
     }
 
     musicBtn.addEventListener('click', toggleMusic);
 
-    // Initial triggers on load
     window.onload = function() {
       initHeartsGenerator();
       setupDodgeFeature();
     };
 
-    // TRANSITION CONTROLS
     function startQuiz() {
-      // Play music automatically upon interaction (good standard UX practice to bypass auto-block)
       if (!isPlaying) {
         toggleMusic();
       }
-      
       document.getElementById('step-welcome').classList.add('hidden');
       document.getElementById('step-quiz').classList.remove('hidden');
       loadQuizQuestion();
     }
 
-    // QUIZ LOGIC
+    // QUIZ CONTROL
     function loadQuizQuestion() {
       const q = quizData[currentQuizIndex];
       const progress = ((currentQuizIndex + 1) / quizData.length) * 100;
@@ -777,22 +760,20 @@
       document.getElementById('quiz-step-text').innerText = `QUESTION ${currentQuizIndex + 1} OF ${quizData.length}`;
       document.getElementById('quiz-question').innerText = q.question;
 
-      // Reset button texts & classes
       const yesBtn = document.getElementById('btn-yes');
       const noBtn = document.getElementById('btn-no');
 
       yesBtn.style.transform = 'scale(1)';
       noBtn.style.transform = 'scale(1)';
+      noBtn.style.position = 'relative';
+      noBtn.style.left = '0px';
+      noBtn.style.top = '0px';
       noBtnScale = 1.0;
       dodgeCount = 0;
 
       if (q.isCuteTrick) {
         yesBtn.innerHTML = `<i class="fas fa-heart"></i> ${q.yesText}`;
         noBtn.innerHTML = `<i class="fas fa-heart"></i> ${q.noText}`;
-        // Remove dodging for the cute trick question so he can pick either option!
-        noBtn.style.position = 'relative';
-        noBtn.style.left = '0px';
-        noBtn.style.top = '0px';
       } else {
         yesBtn.innerHTML = `<i class="fas fa-check-circle"></i> YES`;
         noBtn.innerHTML = `<i class="fas fa-times-circle"></i> NO`;
@@ -801,43 +782,51 @@
       document.getElementById('quiz-tip').style.opacity = q.noType ? '1' : '0';
     }
 
-    // Setup dodging mouse/touch moves on NO button
+    // Fully Responsive & Touch-Safe Button Dodging
     function setupDodgeFeature() {
       const noBtn = document.getElementById('btn-no');
+      const wrapper = document.getElementById('btn-wrapper');
 
       function dodgeButton(e) {
         const q = quizData[currentQuizIndex];
-        if (!q || q.isCuteTrick) return; // No dodge for cute trick
+        if (!q || q.isCuteTrick) return;
         
         if (q.noType === 'dodge') {
           dodgeCount++;
-          // Pick a random spot inside parent boundary
-          const x = (Math.random() - 0.5) * 260; // range from -130 to 130px
-          const y = (Math.random() - 0.5) * 140; // range from -70 to 70px
+          
+          // Constrain movement strictly within the parent buttons wrapper boundary
+          const wrapperWidth = wrapper.offsetWidth;
+          const wrapperHeight = wrapper.offsetHeight;
+          const btnWidth = noBtn.offsetWidth;
+          const btnHeight = noBtn.offsetHeight;
+
+          // Limit movement to prevent overflowing off standard mobile viewports
+          const maxDeltaX = (wrapperWidth / 2) - (btnWidth / 2) - 10;
+          const maxDeltaY = (wrapperHeight / 2) - (btnHeight / 2) - 10;
+
+          const x = (Math.random() - 0.5) * (maxDeltaX * 2);
+          const y = (Math.random() - 0.5) * (maxDeltaY * 1.5);
           
           noBtn.style.position = 'relative';
           noBtn.style.left = `${x}px`;
           noBtn.style.top = `${y}px`;
 
-          // Custom playful hints/messages on persistent clicking of NO
           if (dodgeCount > 3) {
             document.getElementById('quiz-question').innerText = "Oops! Seems your finger slipped. Let's try pressing YES! 😉";
           }
         } else if (q.noType === 'shrink') {
           noBtnScale -= 0.15;
-          if (noBtnScale < 0.2) noBtnScale = 0.2; // Keep a tiny sliver
+          if (noBtnScale < 0.2) noBtnScale = 0.2; 
           noBtn.style.transform = `scale(${noBtnScale})`;
           
-          // Simultaneously make YES bigger to invite clicking
           const yesBtn = document.getElementById('btn-yes');
-          yesBtn.style.transform = `scale(${2.0 - noBtnScale})`;
+          yesBtn.style.transform = `scale(${Math.min(1.4, 2.0 - noBtnScale)})`;
         }
       }
 
-      // Add desktop hover + mobile touch dodge listeners
       noBtn.addEventListener('mouseenter', dodgeButton);
       noBtn.addEventListener('touchstart', (e) => {
-        e.preventDefault(); // Prevent accidental triggers
+        e.preventDefault(); 
         dodgeButton();
       });
     }
@@ -846,7 +835,6 @@
       const q = quizData[currentQuizIndex];
       const feedback = document.getElementById('quiz-feedback');
 
-      // If cute trick question, both are correct!
       if (q.isCuteTrick) {
         feedback.innerText = "Yay! Both choices prove that Kanak is adorable! 🧸🌸";
         feedback.classList.remove('hidden');
@@ -859,11 +847,9 @@
         feedback.classList.remove('hidden');
         progressQuiz();
       } else {
-        // Vivek somehow bypassed the dodge or shrink
         feedback.innerText = "Error! That's not the correct answer, honey! Try again! 😜";
         feedback.classList.remove('hidden');
         
-        // Return button back to original position to allow retry
         const noBtn = document.getElementById('btn-no');
         noBtn.style.position = 'relative';
         noBtn.style.left = '0px';
@@ -874,7 +860,6 @@
     }
 
     function progressQuiz() {
-      // Delay to show response message
       setTimeout(() => {
         document.getElementById('quiz-feedback').classList.add('hidden');
         currentQuizIndex++;
@@ -882,35 +867,28 @@
         if (currentQuizIndex < quizData.length) {
           loadQuizQuestion();
         } else {
-          // Show Lock Screen
           document.getElementById('step-quiz').classList.add('hidden');
           document.getElementById('step-unlock').classList.remove('hidden');
         }
-      }, 2500);
+      }, 2200);
     }
 
-    // UNLOCK COMPLETED REVEAL
     function unlockSurprise() {
-      // Beautiful burst of hearts on unlock
       const overlay = document.getElementById('sparkle-layer');
-      for (let i = 0; i < 40; i++) {
+      for (let i = 0; i < 30; i++) {
         setTimeout(() => {
           generateSparkle(Math.random() * window.innerWidth, Math.random() * window.innerHeight);
-        }, i * 50);
+        }, i * 40);
       }
 
       document.getElementById('step-unlock').classList.add('hidden');
       document.getElementById('step-surprise').classList.remove('hidden');
 
-      // Scroll to top of surprise content smoothly
       window.scrollTo({ top: 0, behavior: 'smooth' });
-
-      // Start the romantic slideshow auto rotation
       startSlideshow();
     }
 
-
-    // CAROUSEL/SLIDESHOW CONTROLLER
+    // CAROUSEL
     let slideIndex = 0;
     const slides = document.getElementsByClassName('slide');
     let slideTimer;
@@ -919,24 +897,23 @@
       if (index >= slides.length) slideIndex = 0;
       if (index < 0) slideIndex = slides.length - 1;
 
-      // Hide all slides
       for (let i = 0; i < slides.length; i++) {
         slides[i].classList.add('opacity-0');
         slides[i].classList.remove('opacity-100');
       }
 
-      // Show the selected slide
       slides[slideIndex].classList.remove('opacity-0');
       slides[slideIndex].classList.add('opacity-100');
     }
 
-    function nextSlide() {
+    // Next/Prev functions linked directly to the button event attributes
+    window.nextSlide = function() {
       slideIndex++;
       showSlide(slideIndex);
       resetSlideTimer();
     }
 
-    function prevSlide() {
+    window.prevSlide = function() {
       slideIndex--;
       showSlide(slideIndex);
       resetSlideTimer();
@@ -945,7 +922,7 @@
     function startSlideshow() {
       slideTimer = setInterval(() => {
         nextSlide();
-      }, 5000); // Shift every 5 seconds
+      }, 5000); 
     }
 
     function resetSlideTimer() {
@@ -953,18 +930,15 @@
       startSlideshow();
     }
 
-
-    // INTERACTIVE ENVELOPES CARD FLIP
+    // LETTER FLIP
     function toggleFlipCard(cardElement) {
       cardElement.classList.toggle('flipped');
-      
-      // Spawn tiny hearts from the card on flip
       const rect = cardElement.getBoundingClientRect();
       const cardX = rect.left + rect.width / 2;
       const cardY = rect.top + rect.height / 2;
       
-      for (let i = 0; i < 6; i++) {
-        generateSparkle(cardX + (Math.random() - 0.5) * 50, cardY + (Math.random() - 0.5) * 50);
+      for (let i = 0; i < 5; i++) {
+        generateSparkle(cardX + (Math.random() - 0.5) * 40, cardY + (Math.random() - 0.5) * 40);
       }
     }
   </script>
