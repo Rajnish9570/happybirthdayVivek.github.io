@@ -1,52 +1,565 @@
-    }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday My Love, Vivek! ✨</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    .flip-card.flipped .flip-card-inner {
-      transform: rotateY(180deg);
-    }
+    <style>
+        :root {
+            --primary-pink: #ff758c;
+            --secondary-pink: #ff7eb3;
+            --dark-pink: #e0526c;
+            --text-main: #4a4a4a;
+            --bg-creamy: #fff5f7;
+            --soft-white: #ffffff;
+        }
 
-    .flip-card-front, .flip-card-back {
-      backface-visibility: hidden;
-      -webkit-backface-visibility: hidden;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-    .flip-card-back {
-      transform: rotateY(180deg);
-    }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-creamy);
+            color: var(--text-main);
+            overflow: hidden;
+        }
 
-    /* Smooth transition for quiz progression */
-    .step-container {
-      transition: all 0.4s ease-out;
-    }
+        /* --- Fullscreen Page Controller Layout --- */
+        .page-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
 
-    /* Sparkle Particle Effect */
-    .sparkle {
-      position: absolute;
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background-color: #fdf2e9;
-      box-shadow: 0 0 10px 2px #f43f5e;
-      pointer-events: none;
-      animation: sparkleAnim 1.2s linear infinite;
-    }
+        .page {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
+            transform: scale(0.95);
+            overflow-y: auto;
+            z-index: 2;
+        }
 
-    @keyframes sparkleAnim {
-      0% { transform: scale(0); opacity: 0; }
-      50% { opacity: 1; }
-      100% { transform: scale(1.4); opacity: 0; }
-    }
+        .page.active {
+            opacity: 1;
+            pointer-events: auto;
+            transform: scale(1);
+        }
 
-    /* Music Control Pill */
-    .music-control-pill {
-      box-shadow: 0 8px 32px 0 rgba(244, 63, 94, 0.15);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border: 1px solid rgba(255, 255, 255, 0.4);
-    }
-  </style>
+        /* --- Ambient Floating Elements --- */
+        .ambient-decorations {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .floating-element {
+            position: absolute;
+            bottom: -50px;
+            animation: floatUp 8s linear infinite;
+            opacity: 0.4;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0.6; }
+            100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* --- Global Custom Button Styling --- */
+        .custom-btn {
+            background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
+            color: white;
+            border: none;
+            padding: 14px 35px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(255, 117, 140, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 15px;
+        }
+
+        .custom-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(255, 117, 140, 0.4);
+        }
+
+        /* --- Audio Control Widget --- */
+        .audio-widget {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 117, 140, 0.3);
+            padding: 10px;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            color: var(--primary-pink);
+        }
+
+        /* ========================================================
+           PAGE 1: WELCOME OVERLAY
+           ======================================================== */
+        #page-welcome {
+            background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
+            color: white;
+            text-align: center;
+        }
+
+        #page-welcome .envelope-btn {
+            background: var(--soft-white);
+            color: var(--primary-pink);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* ========================================================
+           PAGE 2: LANDING HERO
+           ======================================================== */
+        #page-hero {
+            background: linear-gradient(135deg, rgba(255,117,140,0.96) 0%, rgba(255,126,179,0.96) 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .date-badge {
+            background: rgba(255, 255, 255, 0.25);
+            padding: 8px 24px;
+            border-radius: 50px;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        h1.main-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 4.5rem;
+            text-shadow: 2px 4px 10px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
+        }
+
+        h2.sub-title {
+            font-size: 2.3rem;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+
+        .from-tag {
+            font-size: 1.2rem;
+            background: rgba(0,0,0,0.07);
+            padding: 8px 25px;
+            border-radius: 30px;
+            margin-bottom: 30px;
+        }
+
+        /* ========================================================
+           PAGE 3: WISHING NOTES
+           ======================================================== */
+        #page-wishes {
+            background-color: var(--bg-creamy);
+            justify-content: flex-start;
+        }
+
+        .wishes-wrapper {
+            max-width: 650px;
+            width: 100%;
+            margin: auto;
+            padding: 20px 0;
+        }
+
+        .section-headline {
+            text-align: center;
+            font-family: 'Dancing Script', cursive;
+            font-size: 3.2rem;
+            color: var(--dark-pink);
+            margin-bottom: 30px;
+        }
+
+        .note-card {
+            background: var(--soft-white);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(255, 117, 140, 0.06);
+            margin-bottom: 20px;
+            border-left: 6px solid var(--primary-pink);
+        }
+
+        .note-card h3 {
+            color: var(--primary-pink);
+            margin-bottom: 8px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .note-card p {
+            font-size: 1rem;
+            line-height: 1.7;
+            color: var(--text-main);
+        }
+
+        .action-container {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        /* ========================================================
+           PAGE 4: AUTOMATIC PHOTOFRAME SLIDESHOW
+           ======================================================== */
+        #page-gallery {
+            background: #111111;
+            justify-content: center;
+        }
+
+        .slideshow-container {
+            position: relative;
+            width: 100%;
+            max-width: 420px;
+            height: 520px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .polaroid-frame {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: white;
+            padding: 20px;
+            padding-bottom: 45px;
+            border-radius: 4px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            transform: scale(0.9) rotate(5deg);
+            pointer-events: none;
+            transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+        }
+
+        .polaroid-frame.current {
+            opacity: 1;
+            transform: scale(1) rotate(0deg);
+            pointer-events: auto;
+            z-index: 5;
+        }
+
+        .polaroid-frame.past {
+            opacity: 0;
+            transform: scale(1.05) rotate(-5deg);
+            z-index: 1;
+        }
+
+        .img-box {
+            width: 100%;
+            height: 82%;
+            background: #f0f0f0;
+            overflow: hidden;
+            border: 1px solid #ddd;
+        }
+
+        .img-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .caption {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.8rem;
+            color: #2b2b2b;
+            text-align: center;
+            margin-top: auto;
+            font-weight: 600;
+        }
+
+        .slideshow-indicator {
+            margin-top: 25px;
+            color: #888;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+        }
+
+        /* --- Responsive Screen Tweaks --- */
+        @media (max-width: 600px) {
+            h1.main-title { font-size: 3.2rem; }
+            h2.sub-title { font-size: 1.8rem; }
+            .section-headline { font-size: 2.6rem; }
+            .slideshow-container {
+                max-width: 88vw;
+                height: 115vw;
+            }
+            .caption { font-size: 1.5rem; }
+            .note-card { padding: 20px; }
+            .note-card p { font-size: 0.95rem; }
+        }
+    </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between items-center selection:bg-rose-200 selection:text-rose-900 overflow-x-hidden">
+<body>
 
-  <!-- Sparkle Overlay container -->
-  <div id="sparkle-layer" class="fixed inset-0 pointer-events-none z-40"></div>
-  
+    <!-- Dynamic Audio Streaming Element -->
+    <audio id="bg-music" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" loop></audio>
+    
+    <div class="audio-widget" id="music-control" onclick="toggleMusic()" style="display: none;">
+        <i id="music-icon" class="fa-solid fa-volume-xmark"></i>
+    </div>
+
+    <!-- Background Particles Layer -->
+    <div class="ambient-decorations" id="floating-space"></div>
+
+    <!-- Master Single-Page View Wrapper Container -->
+    <div class="page-container">
+
+        <!-- ==========================================
+             STAGE 1: THE REVEAL ENVELOPE OVERLAY
+             ========================================== -->
+        <div class="page active" id="page-welcome">
+            <h2 style="font-family: 'Dancing Script', cursive; font-size: 3.5rem; margin-bottom: 10px;">To: My Love, Vivek ✉️</h2>
+            <p style="font-size: 1.1rem; opacity: 0.9; margin-bottom: 10px;">Kanak Shree has sent you a special surprise...</p>
+            <button class="custom-btn envelope-btn" onclick="navigateToPage('page-hero')">
+                <i class="fa-solid fa-envelope-open-text"></i> Open Envelope
+            </button>
+        </div>
+
+        <!-- ==========================================
+             STAGE 2: HERO BIRTHDAY GREETING SCREEN
+             ========================================== -->
+        <div class="page" id="page-hero">
+            <div class="date-badge">🎉 JANUARY 14</div>
+            <h1 class="main-title">Happy Birthday</h1>
+            <h2 class="sub-title">My Love, Vivek! ✨</h2>
+            <div class="from-tag">With all my love & heart, <strong>Kanak Shree</strong></div>
+            <button class="custom-btn" onclick="navigateToPage('page-wishes')">
+                Read My Heart <i class="fa-solid fa-heart"></i>
+            </button>
+        </div>
+
+        <!-- ==========================================
+             STAGE 3: THE HEARTFELT WISHING PARAGRAPHS
+             ========================================== -->
+        <div class="page" id="page-wishes">
+            <div class="wishes-wrapper">
+                <h2 class="section-headline">My Wishes For You</h2>
+                
+                <div class="note-card">
+                    <h3><i class="fa-solid fa-sparkles"></i> To My Best Friend & Partner</h3>
+                    <p><strong>Happy Birthday, Vivek!</strong><br>
+                    You are the brightness in my days, the smile on my face, and the happiest part of my life. Thank you for being such an incredible partner, for understanding me like no one else can, and for making our beautiful journey together feel like a real fairytale.</p>
+                </div>
+
+                <div class="note-card">
+                    <h3><i class="fa-solid fa-cake-candles"></i> A Love-Filled Wish</h3>
+                    <p>On your special day, I wish you endless happiness, great success, and all the peace in the world. I promise to stand by your side through every chapter of life, celebrating your wins and holding your hand through it all. May all your biggest dreams come true today.</p>
+                </div>
+
+                <div class="note-card">
+                    <h3><i class="fa-solid fa-gift"></i> Cheers To Us</h3>
+                    <p>Thank you for being completely you, for loving me so beautifully, and for making my world so wonderfully safe and sweet. I consider myself remarkably blessed to share my life with someone as kind and handsome as you. Have a truly unforgettable day, my love! 🌸</p>
+                </div>
+
+                <div class="action-container">
+                    <button class="custom-btn" onclick="startMemoryShow()">
+                        Our Memories <i class="fa-solid fa-images"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             STAGE 4: AUTOMATIC FLICKERING PHOTO ALBUM 
+             ========================================== -->
+        <div class="page" id="page-gallery">
+            <h2 class="section-headline" style="color: #fff; margin-bottom: 20px;">Our Journey</h2>
+            
+            <div class="slideshow-container">
+                <!-- Frame 1 -->
+                <div class="polaroid-frame">
+                    <div class="img-box">
+                        <img src="https://picsum.photos/400/500?random=11" alt="Memory One">
+                    </div>
+                    <div class="caption">My Favorite Person 💖</div>
+                </div>
+
+                <!-- Frame 2 -->
+                <div class="polaroid-frame">
+                    <div class="img-box">
+                        <img src="https://picsum.photos/400/500?random=12" alt="Memory Two">
+                    </div>
+                    <div class="caption">Sweet Moments Together 🌟</div>
+                </div>
+
+                <!-- Frame 3 -->
+                <div class="polaroid-frame">
+                    <div class="img-box">
+                        <img src="https://picsum.photos/400/500?random=13" alt="Memory Three">
+                    </div>
+                    <div class="caption">Holding Hands Forever ✨</div>
+                </div>
+
+                <!-- Frame 4 -->
+                <div class="polaroid-frame">
+                    <div class="img-box">
+                        <img src="https://picsum.photos/400/500?random=14" alt="Memory Four">
+                    </div>
+                    <div class="caption">Your Beautiful Smile 😍</div>
+                </div>
+
+                <!-- Frame 5 -->
+                <div class="polaroid-frame">
+                    <div class="img-box">
+                        <img src="https://picsum.photos/400/500?random=15" alt="Memory Five">
+                    </div>
+                    <div class="caption">Forever & Always 🌸</div>
+                </div>
+            </div>
+
+            <div class="slideshow-indicator" id="slide-number">LOADING...</div>
+            
+            <button class="custom-btn" style="margin-top: 25px; padding: 10px 25px; font-size: 0.95rem; background: #333;" onclick="navigateToPage('page-hero')">
+                <i class="fa-solid fa-rotate-left"></i> Restart Journey
+            </button>
+        </div>
+
+    </div>
+
+    <!-- Interactive Behavioral Controlling Scripts -->
+    <script>
+        let musicStarted = false;
+        const bgMusic = document.getElementById('bg-music');
+        const musicControl = document.getElementById('music-control');
+        const musicIcon = document.getElementById('music-icon');
+
+        // Linear Navigation Matrix Coordinator 
+        function navigateToPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            const activePage = document.getElementById(pageId);
+            activePage.classList.add('active');
+
+            if(!musicStarted && pageId === 'page-hero') {
+                musicStarted = true;
+                musicControl.style.display = 'flex';
+                bgMusic.play().then(() => {
+                    musicIcon.className = "fa-solid fa-volume-high";
+                }).catch(() => console.log("Audio playback waiting for interaction."));
+                
+                setInterval(generateFloatingIcon, 450);
+            }
+
+            if(pageId !== 'page-gallery') {
+                stopSlideshowLoop();
+            }
+        }
+
+        // Background Audio Core Controls
+        function toggleMusic() {
+            if (bgMusic.paused) {
+                bgMusic.play();
+                musicIcon.className = "fa-solid fa-volume-high";
+            } else {
+                bgMusic.pause();
+                musicIcon.className = "fa-solid fa-volume-xmark";
+            }
+        }
+
+        // Floating Background Hearts Engine Logic
+        const floatSpace = document.getElementById('floating-space');
+        const particleIcons = ['❤️', '💖', '✨', '🌹', '🎈', '👩‍❤️‍👨'];
+
+        function generateFloatingIcon() {
+            const particle = document.createElement('span');
+            particle.classList.add('floating-element');
+            particle.innerText = particleIcons[Math.floor(Math.random() * particleIcons.length)];
+            particle.style.left = Math.random() * 100 + 'vw';
+            particle.style.animationDuration = Math.random() * 3 + 5 + 's';
+            particle.style.fontSize = Math.random() * 12 + 16 + 'px';
+            
+            floatSpace.appendChild(particle);
+            setTimeout(() => { particle.remove(); }, 8000);
+        }
+
+        // ========================================================
+        // AUTOMATIC POLAROID SLIDESHOW CONTROLLER LOGIC
+        // ========================================================
+        let slideshowTimer = null;
+        let activeSlideIndex = 0;
+        const frames = document.querySelectorAll('.polaroid-frame');
+        const indicator = document.getElementById('slide-number');
+
+        function startMemoryShow() {
+            navigateToPage('page-gallery');
+            activeSlideIndex = 0;
+            updateSlideshowSequence();
+            
+            slideshowTimer = setInterval(() => {
+                activeSlideIndex++;
+                if(activeSlideIndex >= frames.length) {
+                    activeSlideIndex = 0; 
+                }
+                updateSlideshowSequence();
+            }, 3000);
+        }
+
+        function updateSlideshowSequence() {
+            frames.forEach((frame, idx) => {
+                frame.classList.remove('current', 'past');
+                if(idx === activeSlideIndex) {
+                    frame.classList.add('current');
+                } else if (idx < activeSlideIndex) {
+                    frame.classList.add('past');
+                }
+            });
+            indicator.innerText = `MOMENT ${activeSlideIndex + 1} OF ${frames.length}`;
+        }
+
+        function stopSlideshowLoop() {
+            if(slideshowTimer) {
+                clearInterval(slideshowTimer);
+                slideshowTimer = null;
+    
